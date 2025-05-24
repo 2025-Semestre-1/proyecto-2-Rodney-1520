@@ -30,19 +30,22 @@ matriz = [
     ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
     ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+']
 ]
-Molde = [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,0,0,0]]
+
 #Los siguientes comentarios son para ubicarse mejor en cual sentido esta rotada la pieza 
 #se van usar 12 3 6 9 como las manesillas del reloj para las ubicaciones
+
 def piezas():
+     """""""""""""""
+     """""""""""""""
+     
      O = [[0,0,0,0,0],
           [0,0,0,0,0],
           [0,1,1,0,0], #Caso especial no tiene sentido rotar esta pieza
           [0,1,1,0,0],
           [0,0,0,0,0]]
+     
+     """""""""""""""""
+     """""""""""""""""
      
      I =[
          [0,0,0,0,0],
@@ -68,7 +71,9 @@ def piezas():
          [2,2,2,2,0], #9
          [0,0,0,0,0],
          [0,0,0,0,0]]
-         
+     
+     """"""""""""""
+     """"""""""""""
      
      L =[[0,0,3,0,0],
          [0,0,3,0,0],
@@ -95,6 +100,9 @@ def piezas():
          [0,0,0,0,0]
          ]
      
+     """""""""""""""""
+     """""""""""""""""
+     
      J =[[0,0,4,0,0],
          [0,0,4,0,0],
          [0,4,4,0,0], #12
@@ -119,6 +127,9 @@ def piezas():
          [0,0,4,0,0],
          [0,0,0,0,0]
          ]
+     
+     """""""""""""""
+     """""""""""""""
      
      T =[[0,0,0,0,0],
          [0,0,0,0,0],
@@ -145,41 +156,65 @@ def piezas():
          [0,0,0,0,0]
          ]
      
+     """""""""""""""
+     """""""""""""""
+     
      Z =[[0,0,0,0,0],
          [0,0,0,0,0],
-         [0,0,0,0,0], #12
-         [0,0,0,0,0],
+         [0,6,6,0,0], #12
+         [0,0,6,6,0],
          [0,0,0,0,0]
-         ],[
+         ],[ 
          [0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,0,0,0], #3
-         [0,0,0,0,0],
-         [0,0,0,0,0]
-         ],[
-         [0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,0,0,0], #6
-         [0,0,0,0,0],
-         [0,0,0,0,0]
-         ],[
-         [0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,0,0,0], #9
-         [0,0,0,0,0],
+         [0,0,0,6,0],
+         [0,0,6,6,0], #3
+         [0,0,6,0,0],
          [0,0,0,0,0]
          ]
+     
+     #No se colocan las otras 2 posiciones debido a que lo unico que cambia es la posicion del eje
+     #de rotacion
+     
+     """""""""""""""
+     """""""""""""""
       
-         [[6,6],
-          [0,6,6]]
+     U =[[0,0,0,0,0],
+         [0,7,0,7,0],
+         [0,7,7,7,0], # 12
+         [0,0,0,0,0],
+         [0,0,0,0,0]
+         ],[
+         [0,0,0,0,0],
+         [0,0,7,7,0],
+         [0,0,7,0,0], #3
+         [0,0,7,7,0],
+         [0,0,0,0,0]
+         ],[
+         [0,0,0,0,0],
+         [0,0,0,0,0],
+         [0,7,7,7,0], #6
+         [0,7,0,7,0],
+         [0,0,0,0,0]
+         ],[
+         [0,0,0,0,0],
+         [0,7,7,0,0],
+         [0,0,7,0,0], #9
+         [0,7,7,0,0],
+         [0,0,0,0,0]
+         ]
+         
+     """""""""""""""
+     """""""""""""""
      
-     U = [[7,0,7],
-          [7,7,7]]
+     Mas=[ [0,0,0,0,0],
+           [0,0,8,0,0],
+           [0,8,8,8,0], #Caso especial no tiene sentido rotarlo debido a que eso no representa un
+           [0,0,8,0,0], #cambio significativo a la figura
+           [0,0,0,0,0]
+           ]
      
-     Mas = [[0,8,0],
-            [8,8,8],
-            [0,8,0]]
-     
+     """""""""""""""
+     """""""""""""""
      Piezas = [O,I,L,J,T,Z,U,Mas]
      
      Colores = ["Yellow","Lightblue","Orange","Pink","Violet","Green","Brown","Red"]
@@ -189,6 +224,7 @@ def piezas():
 """
 Ventana del Menu Principal
 """""
+
 #Funcion provisional mientras se termina de crear el resto de funciones
 def coomingSoon(opcion):
      messagebox.showinfo("⚠️Aviso⚠️","Funcion en construccion: Coming soon 👷")
@@ -209,6 +245,8 @@ tk.Label(ventana, text="Menu Principal", font=("Arial", 16 , "bold"),bg="darkblu
 
 opciones = ["1.Continuar juego","2.Nuevo juego","3.Estadisticas de juegos","4.Salir"]
 
+#Asignacion de funciones a cada boton
+
 i = 1 
 
 for texto in opciones:
@@ -224,4 +262,5 @@ for texto in opciones:
      boton.pack(pady=3)
      i += 1
 
+#Para poder ejecutar el programa
 ventana.mainloop()
