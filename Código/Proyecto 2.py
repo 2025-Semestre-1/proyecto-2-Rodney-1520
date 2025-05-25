@@ -3,8 +3,23 @@ from tkinter import messagebox
 import random
 
 #==============
-#Tablero y piezas
+#Funciones de apoyo
 #==============
+
+#Largo lista (Realiza lo que haria len)
+#E:Una lista
+#S:Retorna el largo de esa lista
+def largolista(lista):
+     contador = 0
+     if lista == []:
+          return 0
+     for x in lista:
+          contador += 1
+     return contador
+
+#===================
+#Tablero y piezas
+#===================
 
 #Matriz para crear el tablero de juego
 matriz = [
@@ -35,8 +50,8 @@ matriz = [
 #Los siguientes comentarios son para ubicarse mejor en cual sentido esta rotada la pieza 
 #se van usar 12 3 6 9 como las manesillas del reloj para las ubicaciones
 
-#=============
-#=============
+#=====================
+#=====================
 
 piezas = {
     "O": [[
@@ -46,8 +61,10 @@ piezas = {
         [0,1,1,0,0],
         [0,0,0,0,0]
     ]],
-    #==============
-    #==============
+
+#===================
+#===================
+
     "I": [
         [[0,0,0,0,0],
          [0,0,2,0,0],
@@ -70,8 +87,10 @@ piezas = {
          [0,0,0,0,0],
          [0,0,0,0,0]]
     ],
-    #==============
-    #==============
+
+#===================
+#===================
+
     "L": [
         [[0,0,3,0,0],
          [0,0,3,0,0],
@@ -94,8 +113,10 @@ piezas = {
          [0,0,0,0,0],
          [0,0,0,0,0]]
     ],
-    #==============
-    #==============
+
+#===================
+#===================
+
     "J": [
         [[0,0,4,0,0],
          [0,0,4,0,0],
@@ -118,8 +139,10 @@ piezas = {
          [0,0,4,0,0],
          [0,0,0,0,0]]
     ],
-    #==============
-    #==============
+
+#=====================
+#=====================
+
     "T": [
         [[0,0,0,0,0],
          [0,0,0,0,0],
@@ -142,8 +165,10 @@ piezas = {
          [0,0,5,0,0],
          [0,0,0,0,0]]
     ],
-    #==============
-    #==============
+
+#====================
+#====================
+
     "Z": [
         [[0,0,0,0,0],
          [0,0,0,0,0],
@@ -156,8 +181,10 @@ piezas = {
          [0,0,6,0,0],
          [0,0,0,0,0]]
     ],
-    #==============
-    #==============
+
+#====================
+#====================
+
     "U": [
         [[0,0,0,0,0],
          [0,7,0,7,0],
@@ -180,8 +207,10 @@ piezas = {
          [0,7,7,0,0],
          [0,0,0,0,0]]
     ],
-    #==============
-    #==============
+
+#=====================
+#=====================
+
     "Mas": [[
         [0,0,0,0,0],
         [0,0,8,0,0],
@@ -189,19 +218,56 @@ piezas = {
         [0,0,8,0,0],  # cambio significativo a la figura
         [0,0,0,0,0]
     ]],
-    #==============
-    #==============
+
+#===================
+#===================
+
     "Piezas": ["O","I","L","J","T","Z","U","Mas"],
+
     "Colores": ["Yellow","Lightblue","Orange","Pink","Violet","Green","Brown","Red"]
+
 }
 
-""""
-Ejecucion del juego
-"""""
-"""
+#Mostrar Tablero de con Tkinter
+#E:Matriz piezas y frames
+#S:El tablero de juego
+def mostrarTablero(matriz, frameTablero, piezas):
+    colores = {"+": "gainsboro", 0: "black"}
+    listaColores = piezas["Colores"]
 
-Ventana del Menu Principal
-"""""
+    for i in range(1, largolista(listaColores)+1):
+        colores[i] = listaColores[i-1]
+
+    for fila in range(largolista(matriz)):
+        for col in range(largolista(matriz[0])):
+            valor = matriz[fila][col]
+            color = colores.get(valor, "white")
+            celda = tk.Label(frameTablero, bg=color, width=2, height=1, borderwidth=1, relief="solid")
+            celda.grid(row=fila, column=col, padx=1, pady=1)
+
+#=================
+#=================
+
+#=====================
+#Ejecucion del juego
+#=====================
+
+#Nuevo Juego
+#E:La funcion de mostrar tablero
+#S:Muestra la ventana con el tablero juego impreso
+def nuevoJuego():
+    ventanaJuego = tk.Toplevel(ventana)
+    ventanaJuego.title("Tetris - Nuevo Juego")
+    ventanaJuego.configure(bg="black")
+
+    frame_tablero = tk.Frame(ventanaJuego, bg="black")
+    frame_tablero.pack(pady=10)
+
+    mostrarTablero(matriz, frame_tablero, piezas)
+
+#==================
+#Ventana del Menu Principal
+#==================
 
 #Funcion provisional mientras se termina de crear el resto de funciones
 def coomingSoon(opcion):
@@ -231,7 +297,7 @@ for texto in opciones:
      if  i == 1:
           boton = tk.Button(ventana, text=texto, font=("Arial", 12 , "bold"),bg="green",fg="white", width=40, height=2, command=lambda i=i: coomingSoon(i))
      elif  i == 2:
-          boton = tk.Button(ventana, text=texto, font=("Arial", 12 , "bold" ),bg="red",fg="white", width=40, height=2, command=lambda i=i: coomingSoon(i))
+          boton = tk.Button(ventana, text=texto, font=("Arial", 12 , "bold" ),bg="red",fg="white", width=40, height=2, command=nuevoJuego)
      elif  i == 3:
           boton = tk.Button(ventana, text=texto, font=("Arial", 12 ,"bold" ),bg="gold",fg="white",  width=40, height=2, command=lambda i=i: coomingSoon(i))
      elif  i == 4:
