@@ -260,14 +260,39 @@ def nuevoJuego():
     ventanaJuego.title("Tetris - Nuevo Juego")
     ventanaJuego.configure(bg="black")
 
-    frame_tablero = tk.Frame(ventanaJuego, bg="black")
-    frame_tablero.pack(pady=10)
+    #Nombre del jugador y puntaje
+    encabezado = tk.Frame(ventanaJuego, bg="black")
+    encabezado.pack(pady=10)
 
-    mostrarTablero(matriz, frame_tablero, piezas)
+    tk.Label(encabezado, text="Puntaje: (Coming soon)", font=("Arial", 12), fg="white", bg="black").pack(side="left", padx=30)
+    tk.Label(encabezado, text="Jugador: (Coming soon)", font=("Arial", 12), fg="white", bg="black").pack(side="left", padx=30)
 
-#==================
+    #Botones del lado derecho (Pausa,Guardar y Salir)
+    seccionCentral = tk.Frame(ventanaJuego, bg="black")
+    seccionCentral.pack(pady=10)
+
+    frameTablero = tk.Frame(seccionCentral, bg="black")
+    frameTablero.pack(side="left", padx=20)
+    mostrarTablero(matriz, frameTablero, piezas)
+
+    botonesLateral = tk.Frame(seccionCentral, bg="black")
+    botonesLateral.pack(side="left", padx=20)
+
+    tk.Button(botonesLateral, text="Pausa", font=("Arial", 10, "bold"),
+              bg="orange", fg="black", width=12,
+              command=lambda: messagebox.showinfo("Pausa", "Función en construcción")).pack(pady=10)
+
+    tk.Button(botonesLateral, text="Guardar", font=("Arial", 10, "bold"),
+              bg="blue", fg="white", width=12,
+              command=lambda: messagebox.showinfo("Guardar", "Función en construcción")).pack(pady=10)
+
+    tk.Button(botonesLateral, text="Salir", font=("Arial", 10, "bold"),
+              bg="red", fg="white", width=12,
+              command=ventanaJuego.destroy).pack(pady=10)
+
+#===========================
 #Ventana del Menu Principal
-#==================
+#===========================
 
 #Funcion provisional mientras se termina de crear el resto de funciones
 def coomingSoon(opcion):
