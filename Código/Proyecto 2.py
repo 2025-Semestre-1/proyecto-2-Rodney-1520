@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 
-#==============
-#Funciones de apoyo
-#==============
+#===========================
+#Funciones de apoyo (Inicio)
+#===========================
 
 #Largo lista (Realiza lo que haria len)
 #E:Una lista
@@ -17,9 +17,13 @@ def largolista(lista):
           contador += 1
      return contador
 
-#===================
-#Tablero y piezas
-#===================
+#========================
+#Funciones de apoyo (Fin)
+#========================
+
+#=========================
+#Tablero y piezas (Inicio)
+#=========================
 
 #Matriz para crear el tablero de juego
 matriz = [
@@ -51,7 +55,6 @@ matriz = [
 #se van usar 12 3 6 9 como las manesillas del reloj para las ubicaciones
 
 #=====================
-#=====================
 
 piezas = {
     "O": [[
@@ -62,7 +65,6 @@ piezas = {
         [0,0,0,0,0]
     ]],
 
-#===================
 #===================
 
     "I": [
@@ -89,7 +91,6 @@ piezas = {
     ],
 
 #===================
-#===================
 
     "L": [
         [[0,0,3,0,0],
@@ -114,7 +115,6 @@ piezas = {
          [0,0,0,0,0]]
     ],
 
-#===================
 #===================
 
     "J": [
@@ -141,7 +141,6 @@ piezas = {
     ],
 
 #=====================
-#=====================
 
     "T": [
         [[0,0,0,0,0],
@@ -166,8 +165,7 @@ piezas = {
          [0,0,0,0,0]]
     ],
 
-#====================
-#====================
+#=====================
 
     "Z": [
         [[0,0,0,0,0],
@@ -182,8 +180,7 @@ piezas = {
          [0,0,0,0,0]]
     ],
 
-#====================
-#====================
+#======================
 
     "U": [
         [[0,0,0,0,0],
@@ -208,8 +205,8 @@ piezas = {
          [0,0,0,0,0]]
     ],
 
-#=====================
-#=====================
+#=======================
+
 
     "Mas": [[
         [0,0,0,0,0],
@@ -220,7 +217,6 @@ piezas = {
     ]],
 
 #===================
-#===================
 
     "Piezas": ["O","I","L","J","T","Z","U","Mas"],
 
@@ -228,15 +224,25 @@ piezas = {
 
 }
 
+#===================
+#Variables globales para las piezas del tablero
+piezaActiva = None
+posicionX = 3
+posicionY = 0
+rotacion = 0
+nombrePieza = ""
+
+#==================
+
 #Mostrar Tablero de con Tkinter
 #E:Matriz piezas y frames
 #S:El tablero de juego
 def mostrarTablero(matriz, frameTablero, piezas):
-    colores = {"+": "gainsboro", 0: "black"}
+    colores = {"+": "gray", 0: "black"}
     listaColores = piezas["Colores"]
 
-    for i in range(1, largolista(listaColores)+1):
-        colores[i] = listaColores[i-1]
+    for i in range(1, largolista(listaColores) + 1):
+        colores[i] = listaColores[i - 1]
 
     for fila in range(largolista(matriz)):
         for col in range(largolista(matriz[0])):
@@ -245,12 +251,13 @@ def mostrarTablero(matriz, frameTablero, piezas):
             celda = tk.Label(frameTablero, bg=color, width=2, height=1, borderwidth=1, relief="solid")
             celda.grid(row=fila, column=col, padx=1, pady=1)
 
-#=================
-#=================
+#======================
+#Tablero y Piezas (Fin)
+#======================
 
-#=====================
-#Ejecucion del juego
-#=====================
+#============================
+#Ejecucion del juego (Inicio)
+#============================
 
 #Nuevo Juego
 #E:La funcion de mostrar tablero
@@ -289,23 +296,114 @@ def nuevoJuego():
     tk.Button(botonesLateral, text="Salir", font=("Arial", 10, "bold"),
               bg="red", fg="white", width=12,
               command=ventanaJuego.destroy).pack(pady=10)
+    
+    nuevaPieza()
+    insertarPiezaEnMatriz()
+    mostrarTablero(matriz, frameTablero, piezas)
 
+#=================================
+
+#Nueva pieza
+#E:Variables globales de las piezas para el juego
+#S:Una de las piezas aletorias 
+def nuevaPieza():
+    global piezaActiva, rotacion, nombrePieza ,posicionX, posicionY
+    nombrePieza =  random.choice(piezas["Piezas"])
+    piezaActiva = piezas[nombrePieza][0]
+    rotacion = 0
+    posicionX = 4
+    posicionY = 0
+
+#=================================
+
+#Insertar piezas en la matriz(Tablero)
+#E:piezas matriz
+#S:la pieza dentro de la matriz
+def insertarPiezaEnMatriz():
+    for fila in range(5):
+        for col in range(5):
+            valor = piezaActiva[fila][col]
+            if valor != 0:
+                y = posicionY + fila
+                x = posicionX + col
+                if 0 <= y < largolista(matriz) and 0 <= x < largolista(matriz[0]) and matriz[y][x] == 0:
+                    matriz[y][x] = valor
+
+#===================================
+
+#Borrar pieza de la matriz
+#E:la pieza dentro de la matriz de base (molde que se uso una matriz 5x5)
+#S:la pieza sola 
+def borrarPiezaDeMatriz():
+    for fila in range(5):
+        for col in range(5):
+            valor = piezaActiva[fila][col]
+            if valor != 0:
+                y = posicionY + fila
+                x = posicionX + col
+                if 0 <= y < largolista(matriz) and 0 <= x < largolista(matriz[0]) and isinstance(matriz[y][x], int):
+                    matriz[y][x] = 0
+
+#=====================================
+
+#Puede mover abajo
+#E:Verifica si la pieza seleccionada puede bajar mas
+#S:retorna true o false si o no
+def puedeMoverAbajo():
+    for fila in range(5):
+        for col in range(5):
+            if piezaActiva[fila][col] != 0:
+                nuevaFila = posicionY + fila + 1
+                nuevaCol = posicionX + col
+                if matriz[nuevaFila][nuevaCol] != 0:
+                    return False
+    return True
+
+#=====================================
+
+#Mover pieza
+#E:
+#S:
+def moverPieza(frameTablero):
+    global posicionY
+    
+    borrarPiezaDeMatriz()
+    
+    if puedeMoverAbajo():
+        posicionY += 1
+        insertarPiezaEnMatriz()
+        mostrarTablero(matriz, frameTablero, piezas)
+        
+    else:
+        insertarPiezaEnMatriz()
+        mostrarTablero(matriz,frameTablero,piezas)
+
+#==========================
+#Ejecucion del Juego (Fin)
 #===========================
-#Ventana del Menu Principal
-#===========================
+
+#===================================
+#Ventana del Menu Principal (Inicio)
+#===================================
 
 #Funcion provisional mientras se termina de crear el resto de funciones
 def coomingSoon(opcion):
      messagebox.showinfo("⚠️Aviso⚠️","Funcion en construccion: Coming soon 👷")
 
+#======================================
+
 #Funcion para poder cerrar ventana principal
 def salir():
      ventana.destroy()
+
+#======================================
 
 #Creacion de la ventana principal
 ventana = tk.Tk()
 ventana.title("Tetris")
 ventana.geometry("650x575")
+
+#=======================================
 
 #Personalizacion de la ventana
 ventana.configure(bg="darkblue")
@@ -313,6 +411,8 @@ ventana.configure(bg="darkblue")
 tk.Label(ventana, text="Menu Principal", font=("Arial", 16 , "bold"),bg="darkblue",fg="orange").pack(pady=10)
 
 opciones = ["1.Continuar juego","2.Nuevo juego","3.Estadisticas de juegos","4.Salir"]
+
+#======================================
 
 #Asignacion de funciones a cada boton
 
@@ -331,5 +431,11 @@ for texto in opciones:
      boton.pack(pady=3)
      i += 1
 
+#========================================
+
 #Para poder ejecutar el programa
 ventana.mainloop()
+
+#=====================================
+#Ventana del Menu Principal (Fin)
+#=====================================
