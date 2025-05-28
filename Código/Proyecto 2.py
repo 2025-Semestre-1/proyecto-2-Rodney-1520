@@ -220,7 +220,7 @@ piezas = {
 
     "Piezas": ["O","I","L","J","T","Z","U","Mas"],
 
-    "Colores": ["Yellow","Lightblue","Orange","Pink","Violet","Green","Brown","Red"]
+    "Colores": ["Yellow","Blue","Orange","Pink","Violet","Green","Brown","Red"]
 
 }
 
@@ -270,36 +270,29 @@ def nuevoJuego():
     #Nombre del jugador y puntaje
     encabezado = tk.Frame(ventanaJuego, bg="black")
     encabezado.pack(pady=10)
-
     tk.Label(encabezado, text="Puntaje: (Coming soon)", font=("Arial", 12), fg="white", bg="black").pack(side="left", padx=30)
     tk.Label(encabezado, text="Jugador: (Coming soon)", font=("Arial", 12), fg="white", bg="black").pack(side="left", padx=30)
 
-    #Botones del lado derecho (Pausa,Guardar y Salir)
+    #Botones del lado derecho(pausa,guardar,salir) 
     seccionCentral = tk.Frame(ventanaJuego, bg="black")
     seccionCentral.pack(pady=10)
 
     frameTablero = tk.Frame(seccionCentral, bg="black")
     frameTablero.pack(side="left", padx=20)
+    nuevaPieza()               
+    insertarPiezaEnMatriz()
     mostrarTablero(matriz, frameTablero, piezas)
 
     botonesLateral = tk.Frame(seccionCentral, bg="black")
     botonesLateral.pack(side="left", padx=20)
+    tk.Button(botonesLateral, text="Pausa", font=("Arial", 10, "bold"), bg="orange", fg="black", width=12, command=lambda: messagebox.showinfo("Pausa", "Función en construcción")).pack(pady=10)
+    tk.Button(botonesLateral, text="Guardar", font=("Arial", 10, "bold"), bg="blue", fg="white", width=12, command=lambda: messagebox.showinfo("Guardar", "Función en construcción")).pack(pady=10)
+    tk.Button(botonesLateral, text="Salir", font=("Arial", 10, "bold"), bg="red", fg="white", width=12, command=ventanaJuego.destroy).pack(pady=10)
 
-    tk.Button(botonesLateral, text="Pausa", font=("Arial", 10, "bold"),
-              bg="orange", fg="black", width=12,
-              command=lambda: messagebox.showinfo("Pausa", "Función en construcción")).pack(pady=10)
-
-    tk.Button(botonesLateral, text="Guardar", font=("Arial", 10, "bold"),
-              bg="blue", fg="white", width=12,
-              command=lambda: messagebox.showinfo("Guardar", "Función en construcción")).pack(pady=10)
-
-    tk.Button(botonesLateral, text="Salir", font=("Arial", 10, "bold"),
-              bg="red", fg="white", width=12,
-              command=ventanaJuego.destroy).pack(pady=10)
-    
-    nuevaPieza()
-    insertarPiezaEnMatriz()
-    mostrarTablero(matriz, frameTablero, piezas)
+    ventanaJuego.bind("<KeyPress-Left>", lambda e: moverPiezaDireccion("izquierda", frameTablero))
+    ventanaJuego.bind("<KeyPress-Right>", lambda e: moverPiezaDireccion("derecha", frameTablero))
+    ventanaJuego.bind("<KeyPress-Down>", lambda e: moverPiezaDireccion("abajo", frameTablero))
+    ventanaJuego.focus_set()
 
 #=================================
 
@@ -362,21 +355,65 @@ def puedeMoverAbajo():
 #=====================================
 
 #Mover pieza
-#E:
-#S:
+#E: Frame del tablero
+#S: Mueve la pieza hacia abajo o genera nueva si ya no puede bajar
 def moverPieza(frameTablero):
     global posicionY
-    
+
     borrarPiezaDeMatriz()
-    
+
     if puedeMoverAbajo():
         posicionY += 1
         insertarPiezaEnMatriz()
         mostrarTablero(matriz, frameTablero, piezas)
-        
     else:
         insertarPiezaEnMatriz()
-        mostrarTablero(matriz,frameTablero,piezas)
+        mostrarTablero(matriz, frameTablero, piezas)
+
+        
+        nuevaPieza()
+        insertarPiezaEnMatriz()
+        mostrarTablero(matriz, frameTablero, piezas)
+
+#=====================================
+
+#Puede Mover teclas
+#E:Una de las distintas piezas del juego
+#S:Verfica si la pieza se puede mover retorna True si se puede y False si no
+#R:Depende de la piezas del juego para funcionar
+def puedeMover(nuevaX,nuevaY):
+    for fila in range(5):
+        for col in range(5):
+            if piezaActiva[fila][col] != 0:
+                y = nuevaY + fila
+                x = nuevaX + col
+                if y >= largolista(matriz) or x < 0 or x >= largolista(matriz[0]) or matriz[y][x] != 0:
+                    return False
+    return True
+
+#=====================================
+
+#Mover Pieza direccion 
+#E:Una pieza culaquiera del juego
+#S:se realiza la trsalcion de la pieza ya sea para abajo izquierda o derecha
+#R:Depende de tener piezas y solo si se pueden mover
+def moverPiezaDireccion(direccion,frameTablero):
+    global posicionX, posicionY
+    
+    borrarPiezaDeMatriz()
+    
+    if direccion == "izquierda":
+        if puedeMover(posicionX - 1,posicionY):
+            posicionX -=1
+    elif direccion == "derecha":
+            if puedeMover(posicionX + 1,posicionY):
+                posicionX += 1
+    elif direccion == "abajo":
+            if puedeMover(posicionX, posicionY + 1):
+                posicionY +=1
+        
+    insertarPiezaEnMatriz()
+    mostrarTablero(matriz,frameTablero,piezas)
 
 #==========================
 #Ejecucion del Juego (Fin)
