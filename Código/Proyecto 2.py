@@ -3,476 +3,687 @@ from tkinter import messagebox
 import random
 
 #===========================
-#Funciones de apoyo (Inicio)
+# Funciones de apoyo
 #===========================
 
-#Largo lista (Realiza lo que haria len)
-#E:Una lista
-#S:Retorna el largo de esa lista
 def largolista(lista):
-     contador = 0
-     if lista == []:
-          return 0
-     for x in lista:
-          contador += 1
-     return contador
+    if not lista:
+        return 0
+    contador = 0
+    for _ in lista:
+        contador += 1
+    return contador
 
-#========================
-#Funciones de apoyo (Fin)
-#========================
+def esta_en_lista(elemento, lista):
+    for item in lista:
+        if item == elemento:
+            return True
+    return False
 
 #=========================
-#Tablero y piezas (Inicio)
+# Tablero personalizable por el usuario
 #=========================
 
-#Matriz para crear el tablero de juego
-matriz = [
+MATRIZ_PERSONALIZABLE = [
     ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0, '+',  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
-    ['+',  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, '+'],
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'], 
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, "X", 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
     ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+']
 ]
 
-#Los siguientes comentarios son para ubicarse mejor en cual sentido esta rotada la pieza 
-#se van usar 12 3 6 9 como las manesillas del reloj para las ubicaciones
+def crear_tablero():
+    matriz = []
+    for fila in MATRIZ_PERSONALIZABLE:
+        nueva_fila = fila.copy()  
+        matriz + [nueva_fila]
+    return matriz
 
-#=====================
-
+# Piezas de Tetris 
 piezas = {
+    # Pieza O (Cuadrado) - No rota
     "O": [[
         [0,0,0,0,0],
         [0,0,0,0,0],
-        [0,1,1,0,0],  # Caso especial no tiene sentido rotar esta pieza
+        [0,1,1,0,0],
         [0,1,1,0,0],
         [0,0,0,0,0]
     ]],
 
-#===================
-
+    # Pieza I (Línea) - 2 rotaciones
     "I": [
-        [[0,0,0,0,0],
-         [0,0,2,0,0],
-         [0,0,2,0,0],  # 12
-         [0,0,2,0,0],
-         [0,0,2,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,2,2,2,2],  # 3
-         [0,0,0,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,2,0,0,0],
-         [0,2,0,0,0],  # 6
-         [0,2,0,0,0],
-         [0,2,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [2,2,2,2,0],  # 9
-         [0,0,0,0,0],
-         [0,0,0,0,0]]
+        # Vertical
+        [[0,0,0,0,0], [0,0,2,0,0], [0,0,2,0,0], [0,0,2,0,0], [0,0,2,0,0]],
+        # Horizontal
+        [[0,0,0,0,0], [0,0,0,0,0], [2,2,2,2,0], [0,0,0,0,0], [0,0,0,0,0]]
     ],
 
-#===================
-
+    # Pieza L - 4 rotaciones
     "L": [
-        [[0,0,3,0,0],
-         [0,0,3,0,0],
-         [0,0,3,3,0],  # 12
-         [0,0,0,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,3,3,3],  # 3
-         [0,0,3,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,3,3,0,0],  # 6
-         [0,0,3,0,0],
-         [0,0,3,0,0]],
-        [[0,0,0,0,0],
-         [0,0,3,0,0],
-         [3,3,3,0,0],  # 9
-         [0,0,0,0,0],
-         [0,0,0,0,0]]
+        # Rotación 0
+        [[0,0,0,0,0], [0,0,3,0,0], [0,0,3,0,0], [0,0,3,3,0], [0,0,0,0,0]],
+        # Rotación 1
+        [[0,0,0,0,0], [0,0,0,0,0], [0,3,3,3,0], [0,3,0,0,0], [0,0,0,0,0]],
+        # Rotación 2
+        [[0,0,0,0,0], [0,3,3,0,0], [0,0,3,0,0], [0,0,3,0,0], [0,0,0,0,0]],
+        # Rotación 3
+        [[0,0,0,0,0], [0,0,0,3,0], [0,3,3,3,0], [0,0,0,0,0], [0,0,0,0,0]]
     ],
 
-#===================
-
+    # Pieza J - 4 rotaciones
     "J": [
-        [[0,0,4,0,0],
-         [0,0,4,0,0],
-         [0,4,4,0,0],  # 12
-         [0,0,0,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,4,0,0],
-         [0,0,4,4,4],  # 3
-         [0,0,0,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,0,4,4,0],  # 6
-         [0,0,4,0,0],
-         [0,0,4,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [4,4,4,0,0],  # 9
-         [0,0,4,0,0],
-         [0,0,0,0,0]]
+        # Rotación 0
+        [[0,0,0,0,0], [0,0,4,0,0], [0,0,4,0,0], [0,4,4,0,0], [0,0,0,0,0]],
+        # Rotación 1
+        [[0,0,0,0,0], [0,4,0,0,0], [0,4,4,4,0], [0,0,0,0,0], [0,0,0,0,0]],
+        # Rotación 2
+        [[0,0,0,0,0], [0,0,4,4,0], [0,0,4,0,0], [0,0,4,0,0], [0,0,0,0,0]],
+        # Rotación 3
+        [[0,0,0,0,0], [0,0,0,0,0], [4,4,4,0,0], [0,0,4,0,0], [0,0,0,0,0]]
     ],
 
-#=====================
-
+    # Pieza T - 4 rotaciones
     "T": [
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,5,5,5,0],  # 12
-         [0,0,5,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,5,0,0],
-         [0,5,5,0,0],  # 3
-         [0,0,5,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,5,0,0],
-         [0,5,5,5,0],  # 6
-         [0,0,0,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,5,0,0],
-         [0,0,5,5,0],  # 9
-         [0,0,5,0,0],
-         [0,0,0,0,0]]
+        # Rotación 0
+        [[0,0,0,0,0], [0,0,0,0,0], [5,5,5,0,0], [0,5,0,0,0], [0,0,0,0,0]],
+        # Rotación 1
+        [[0,0,0,0,0], [0,5,0,0,0], [5,5,0,0,0], [0,5,0,0,0], [0,0,0,0,0]],
+        # Rotación 2
+        [[0,0,0,0,0], [0,5,0,0,0], [5,5,5,0,0], [0,0,0,0,0], [0,0,0,0,0]],
+        # Rotación 3
+        [[0,0,0,0,0], [0,5,0,0,0], [0,5,5,0,0], [0,5,0,0,0], [0,0,0,0,0]]
     ],
 
-#=====================
-
+    # Pieza Z - 2 rotaciones
     "Z": [
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,6,6,0,0],  # 12
-         [0,0,6,6,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,6,0],
-         [0,0,6,6,0],  # 3
-         [0,0,6,0,0],
-         [0,0,0,0,0]]
+        # Rotación 0
+        [[0,0,0,0,0], [0,0,0,0,0], [6,6,0,0,0], [0,6,6,0,0], [0,0,0,0,0]],
+        # Rotación 1
+        [[0,0,0,0,0], [0,0,6,0,0], [0,6,6,0,0], [0,6,0,0,0], [0,0,0,0,0]]
     ],
 
-#======================
+    # Pieza S - 2 rotaciones
+    "S": [
+        # Rotación 0
+        [[0,0,0,0,0], [0,0,0,0,0], [0,7,7,0,0], [7,7,0,0,0], [0,0,0,0,0]],
+        # Rotación 1
+        [[0,0,0,0,0], [0,7,0,0,0], [0,7,7,0,0], [0,0,7,0,0], [0,0,0,0,0]]
+    ],
 
+    # Pieza + (Cruz) - 4 rotaciones
+    "Mas": [
+        # Rotación 0
+        [[0,0,0,0,0], [0,0,8,0,0], [0,8,8,8,0], [0,0,8,0,0], [0,0,0,0,0]],
+        # Rotación 1 (igual que 0, es simétrica)
+        [[0,0,0,0,0], [0,0,8,0,0], [0,8,8,8,0], [0,0,8,0,0], [0,0,0,0,0]],
+        # Rotación 2 (igual que 0, es simétrica)
+        [[0,0,0,0,0], [0,0,8,0,0], [0,8,8,8,0], [0,0,8,0,0], [0,0,0,0,0]],
+        # Rotación 3 (igual que 0, es simétrica)
+        [[0,0,0,0,0], [0,0,8,0,0], [0,8,8,8,0], [0,0,8,0,0], [0,0,0,0,0]]
+    ],
+
+    # Pieza U - 4 rotaciones
     "U": [
-        [[0,0,0,0,0],
-         [0,7,0,7,0],
-         [0,7,7,7,0],  # 12
-         [0,0,0,0,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,7,7,0],
-         [0,0,7,0,0],  # 3
-         [0,0,7,7,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,0,0,0,0],
-         [0,7,7,7,0],  # 6
-         [0,7,0,7,0],
-         [0,0,0,0,0]],
-        [[0,0,0,0,0],
-         [0,7,7,0,0],
-         [0,0,7,0,0],  # 9
-         [0,7,7,0,0],
-         [0,0,0,0,0]]
-    ],
-
-#=======================
-
-
-    "Mas": [[
-        [0,0,0,0,0],
-        [0,0,8,0,0],
-        [0,8,8,8,0],  # Caso especial no tiene sentido rotarlo debido a que eso no representa un
-        [0,0,8,0,0],  # cambio significativo a la figura
-        [0,0,0,0,0]
-    ]],
-
-#===================
-
-    "Piezas": ["O","I","L","J","T","Z","U","Mas"],
-
-    "Colores": ["Yellow","Blue","Orange","Pink","Violet","Green","Brown","Red"]
-
+        # Rotación 0
+        [[0,0,0,0,0], [0,0,0,0,0], [9,0,9,0,0], [9,9,9,0,0], [0,0,0,0,0]],
+        # Rotación 1
+        [[0,0,0,0,0], [0,9,9,0,0], [0,9,0,0,0], [0,9,9,0,0], [0,0,0,0,0]],
+        # Rotación 2
+        [[0,0,0,0,0], [0,0,0,0,0], [9,9,9,0,0], [9,0,9,0,0], [0,0,0,0,0]],
+        # Rotación 3
+        [[0,0,0,0,0], [0,9,9,0,0], [0,0,9,0,0], [0,9,9,0,0], [0,0,0,0,0]]
+    ]
 }
 
-#===================
-#Variables globales para las piezas del tablero
-piezaActiva = None
-posicionX = 3
-posicionY = 0
-rotacion = 0
-nombrePieza = ""
+# Listas de los tipos de piezas y colores
+TIPOS_PIEZAS = ["O", "I", "L", "J", "T", "Z", "S", "Mas", "U"]
+COLORES_LISTA = ["yellow", "cyan", "orange", "blue", "purple", "red", "green", "magenta", "pink"]
+
+def obtener_color(valor):
+    if valor == '+':
+        return "gray"
+    elif valor == 'X':  # Obstáculos definidos por el usuario
+        return "darkred"
+    elif valor == 0:
+        return "black"
+    elif valor >= 1 and valor <= largolista(COLORES_LISTA):
+        return COLORES_LISTA[valor - 1]
+    else:
+        return "white"
 
 #==================
+# Variables globales
+#==================
 
-#Mostrar Tablero de con Tkinter
-#E:Matriz piezas y frames
-#S:El tablero de juego
-def mostrarTablero(matriz, frameTablero, piezas):
-    colores = {"+": "gray", 0: "black"}
-    listaColores = piezas["Colores"]
+matriz = crear_tablero()
+piezaActiva = None
+posicionX = 5
+posicionY = 1
+rotacion = 0
+tipoPieza = ""
+puntuacion = 0
+nivel = 1
+velocidad = 500
+pausado = False
+juego_terminado = False
+movimiento_activo = False
 
-    for i in range(1, largolista(listaColores) + 1):
-        colores[i] = listaColores[i - 1]
+#==================
+# Funciones de juego
+#==================
 
+def mostrarTablero(matriz, frameTablero):
+    for widget in frameTablero.winfo_children():
+        widget.destroy()
+    
+    celdas = []
+    for fila in range(largolista(matriz)):
+        fila_celdas = []
+        for col in range(largolista(matriz[0])):
+            valor = matriz[fila][col]
+            color = obtener_color(valor)
+            
+            celda = tk.Label(
+                frameTablero, 
+                width=3, 
+                height=1, 
+                borderwidth=1, 
+                relief="solid",
+                bg=color
+            )
+            celda.grid(row=fila, column=col, padx=0, pady=0)
+            fila_celdas = fila_celdas + [celda]
+        celdas = celdas + [fila_celdas]
+    
+    return celdas
+
+def actualizar_tablero(celdas):
     for fila in range(largolista(matriz)):
         for col in range(largolista(matriz[0])):
             valor = matriz[fila][col]
-            color = colores.get(valor, "white")
-            celda = tk.Label(frameTablero, bg=color, width=2, height=1, borderwidth=1, relief="solid")
-            celda.grid(row=fila, column=col, padx=1, pady=1)
+            color = obtener_color(valor)
+            celdas[fila][col].configure(bg=color)
 
-#======================
-#Tablero y Piezas (Fin)
-#======================
-
-#============================
-#Ejecucion del juego (Inicio)
-#============================
-
-#Nuevo Juego
-#E:La funcion de mostrar tablero
-#S:Muestra la ventana con el tablero juego impreso
-def nuevoJuego():
-    ventanaJuego = tk.Toplevel(ventana)
-    ventanaJuego.title("Tetris - Nuevo Juego")
-    ventanaJuego.configure(bg="black")
-
-    #Nombre del jugador y puntaje
-    encabezado = tk.Frame(ventanaJuego, bg="black")
-    encabezado.pack(pady=10)
-    tk.Label(encabezado, text="Puntaje: (Coming soon)", font=("Arial", 12), fg="white", bg="black").pack(side="left", padx=30)
-    tk.Label(encabezado, text="Jugador: (Coming soon)", font=("Arial", 12), fg="white", bg="black").pack(side="left", padx=30)
-
-    #Botones del lado derecho(pausa,guardar,salir) 
-    seccionCentral = tk.Frame(ventanaJuego, bg="black")
-    seccionCentral.pack(pady=10)
-
-    frameTablero = tk.Frame(seccionCentral, bg="black")
-    frameTablero.pack(side="left", padx=20)
-    nuevaPieza()               
-    insertarPiezaEnMatriz()
-    mostrarTablero(matriz, frameTablero, piezas)
-
-    botonesLateral = tk.Frame(seccionCentral, bg="black")
-    botonesLateral.pack(side="left", padx=20)
-    tk.Button(botonesLateral, text="Pausa", font=("Arial", 10, "bold"), bg="orange", fg="black", width=12, command=lambda: messagebox.showinfo("Pausa", "Función en construcción")).pack(pady=10)
-    tk.Button(botonesLateral, text="Guardar", font=("Arial", 10, "bold"), bg="blue", fg="white", width=12, command=lambda: messagebox.showinfo("Guardar", "Función en construcción")).pack(pady=10)
-    tk.Button(botonesLateral, text="Salir", font=("Arial", 10, "bold"), bg="red", fg="white", width=12, command=ventanaJuego.destroy).pack(pady=10)
-
-    ventanaJuego.bind("<KeyPress-Left>", lambda e: moverPiezaDireccion("izquierda", frameTablero))
-    ventanaJuego.bind("<KeyPress-Right>", lambda e: moverPiezaDireccion("derecha", frameTablero))
-    ventanaJuego.bind("<KeyPress-Down>", lambda e: moverPiezaDireccion("abajo", frameTablero))
-    ventanaJuego.focus_set()
-
-#=================================
-
-#Nueva pieza
-#E:Variables globales de las piezas para el juego
-#S:Una de las piezas aletorias 
 def nuevaPieza():
-    global piezaActiva, rotacion, nombrePieza ,posicionX, posicionY
-    nombrePieza =  random.choice(piezas["Piezas"])
-    piezaActiva = piezas[nombrePieza][0]
+    global piezaActiva, rotacion, tipoPieza, posicionX, posicionY
+    
+    indice = random.randint(0, largolista(TIPOS_PIEZAS) - 1)
+    tipoPieza = TIPOS_PIEZAS[indice]
+    piezaActiva = piezas[tipoPieza][0]
     rotacion = 0
-    posicionX = 4
-    posicionY = 0
+    posicionX = 5
+    posicionY = 1
 
-#=================================
-
-#Insertar piezas en la matriz(Tablero)
-#E:piezas matriz
-#S:la pieza dentro de la matriz
-def insertarPiezaEnMatriz():
+def puedeMover(nuevaX, nuevaY, pieza=None):
+    if pieza == None:
+        pieza = piezaActiva
+    
     for fila in range(5):
         for col in range(5):
-            valor = piezaActiva[fila][col]
-            if valor != 0:
-                y = posicionY + fila
-                x = posicionX + col
-                if 0 <= y < largolista(matriz) and 0 <= x < largolista(matriz[0]) and matriz[y][x] == 0:
-                    matriz[y][x] = valor
-
-#===================================
-
-#Borrar pieza de la matriz
-#E:la pieza dentro de la matriz de base (molde que se uso una matriz 5x5)
-#S:la pieza sola 
-def borrarPiezaDeMatriz():
-    for fila in range(5):
-        for col in range(5):
-            valor = piezaActiva[fila][col]
-            if valor != 0:
-                y = posicionY + fila
-                x = posicionX + col
-                if 0 <= y < largolista(matriz) and 0 <= x < largolista(matriz[0]) and isinstance(matriz[y][x], int):
-                    matriz[y][x] = 0
-
-#=====================================
-
-#Puede mover abajo
-#E:Verifica si la pieza seleccionada puede bajar mas
-#S:retorna true o false si o no
-def puedeMoverAbajo():
-    for fila in range(5):
-        for col in range(5):
-            if piezaActiva[fila][col] != 0:
-                nuevaFila = posicionY + fila + 1
-                nuevaCol = posicionX + col
-                if matriz[nuevaFila][nuevaCol] != 0:
-                    return False
-    return True
-
-#=====================================
-
-#Mover pieza
-#E: Frame del tablero
-#S: Mueve la pieza hacia abajo o genera nueva si ya no puede bajar
-def moverPieza(frameTablero):
-    global posicionY
-
-    borrarPiezaDeMatriz()
-
-    if puedeMoverAbajo():
-        posicionY += 1
-        insertarPiezaEnMatriz()
-        mostrarTablero(matriz, frameTablero, piezas)
-    else:
-        insertarPiezaEnMatriz()
-        mostrarTablero(matriz, frameTablero, piezas)
-
-        
-        nuevaPieza()
-        insertarPiezaEnMatriz()
-        mostrarTablero(matriz, frameTablero, piezas)
-
-#=====================================
-
-#Puede Mover teclas
-#E:Una de las distintas piezas del juego
-#S:Verfica si la pieza se puede mover retorna True si se puede y False si no
-#R:Depende de la piezas del juego para funcionar
-def puedeMover(nuevaX,nuevaY):
-    for fila in range(5):
-        for col in range(5):
-            if piezaActiva[fila][col] != 0:
+            if pieza[fila][col] != 0:
                 y = nuevaY + fila
                 x = nuevaX + col
-                if y >= largolista(matriz) or x < 0 or x >= largolista(matriz[0]) or matriz[y][x] != 0:
+                
+                # Verificar límites
+                if (y < 0 or y >= largolista(matriz) or 
+                    x < 0 or x >= largolista(matriz[0])):
+                    return False
+                
+                # Verificar colisiones (incluye obstáculos 'X')
+                if matriz[y][x] != 0:
                     return False
     return True
 
-#=====================================
+def insertarPieza():
+    for fila in range(5):
+        for col in range(5):
+            if piezaActiva[fila][col] != 0:
+                y = posicionY + fila
+                x = posicionX + col
+                if (0 <= y and y < largolista(matriz) and 
+                    0 <= x and x < largolista(matriz[0])):
+                    if matriz[y][x] == 0:
+                        matriz[y][x] = piezaActiva[fila][col]
 
-#Mover Pieza direccion 
-#E:Una pieza culaquiera del juego
-#S:se realiza la trsalcion de la pieza ya sea para abajo izquierda o derecha
-#R:Depende de tener piezas y solo si se pueden mover
-def moverPiezaDireccion(direccion,frameTablero):
+def borrarPieza():
+    for fila in range(5):
+        for col in range(5):
+            if piezaActiva[fila][col] != 0:
+                y = posicionY + fila
+                x = posicionX + col
+                if (0 <= y and y < largolista(matriz) and 
+                    0 <= x and x < largolista(matriz[0])):
+                    # Solo borrar si la celda contiene una pieza (número), NO obstáculos ni bordes
+                    if (isinstance(matriz[y][x], int) and matriz[y][x] > 0 and 
+                        matriz[y][x] != '+' and matriz[y][x] != 'X'):
+                        matriz[y][x] = 0
+
+def rotarPieza():
+    global piezaActiva, rotacion
+    
+    if tipoPieza == "O":  # El cuadrado no posee rotacion
+        return False
+    
+    # Guardar estado actual
+    pieza_anterior = piezaActiva
+    rotacion_anterior = rotacion
+    
+    # Calcular nueva rotación
+    num_rotaciones = largolista(piezas[tipoPieza])
+    nueva_rotacion = (rotacion + 1) % num_rotaciones
+    nueva_pieza = piezas[tipoPieza][nueva_rotacion]
+    
+    # Verificar si es posible rotar
+    if puedeMover(posicionX, posicionY, nueva_pieza):
+        rotacion = nueva_rotacion
+        piezaActiva = nueva_pieza
+        return True
+    
+    return False
+
+def verificarFilasCompletas():
+    global puntuacion, nivel, velocidad
+    
+    filas_eliminadas = 0
+    fila = largolista(matriz) - 2  # Empezar desde abajo, evitar bordes
+    
+    while fila > 0:
+        completa = True
+        
+        for col in range(1, largolista(matriz[0]) - 1):
+            if matriz[fila][col] == 0 or matriz[fila][col] == 'X':
+                completa = False
+                break
+        
+        if completa:
+            filas_eliminadas = filas_eliminadas + 1
+            
+            for y in range(fila, 1, -1):
+                for x in range(1, largolista(matriz[0]) - 1):
+                    if MATRIZ_PERSONALIZABLE[y][x] == 'X':
+                        matriz[y][x] = 'X'  
+                    elif MATRIZ_PERSONALIZABLE[y-1][x] == 'X':
+                        matriz[y][x] = 0    
+                    else:
+                        matriz[y][x] = matriz[y-1][x]  
+            
+            for x in range(1, largolista(matriz[0]) - 1):
+                if MATRIZ_PERSONALIZABLE[1][x] == 'X':
+                    matriz[1][x] = 'X'
+                else:
+                    matriz[1][x] = 0
+                
+        else:
+            fila = fila - 1
+    
+    if filas_eliminadas > 0:
+        puntos = filas_eliminadas * 100 * nivel
+        puntuacion = puntuacion + puntos
+        
+        nuevo_nivel = (puntuacion // 1000) + 1
+        if nuevo_nivel > nivel:
+            nivel = nuevo_nivel
+            velocidad = max(100, 500 - (nivel - 1) * 50)
+    
+    return filas_eliminadas
+
+def moverPieza(direccion, celdas):
     global posicionX, posicionY
     
-    borrarPiezaDeMatriz()
+    if pausado or juego_terminado:
+        return
     
-    if direccion == "izquierda":
-        if puedeMover(posicionX - 1,posicionY):
-            posicionX -=1
-    elif direccion == "derecha":
-            if puedeMover(posicionX + 1,posicionY):
-                posicionX += 1
-    elif direccion == "abajo":
-            if puedeMover(posicionX, posicionY + 1):
-                posicionY +=1
+    borrarPieza()
+    
+    if direccion == "izquierda" and puedeMover(posicionX - 1, posicionY):
+        posicionX = posicionX - 1
+    elif direccion == "derecha" and puedeMover(posicionX + 1, posicionY):
+        posicionX = posicionX + 1
+    elif direccion == "abajo" and puedeMover(posicionX, posicionY + 1):
+        posicionY = posicionY + 1
+    elif direccion == "rotar":
+        rotarPieza()
+    
+    insertarPieza()
+    actualizar_tablero(celdas)
+
+def caerPieza(frameTablero, celdas, labelPuntuacion, nombre_jugador="Jugador"):
+    global posicionY, juego_terminado, movimiento_activo
+    
+    if juego_terminado or not movimiento_activo:
+        return
+    
+    if pausado:
+        frameTablero.after(100, lambda: caerPieza(frameTablero, celdas, labelPuntuacion, nombre_jugador))
+        return
+    
+    borrarPieza()
+    
+    if puedeMover(posicionX, posicionY + 1):
+        posicionY = posicionY + 1
+        insertarPieza()
+        actualizar_tablero(celdas)
+        frameTablero.after(velocidad, lambda: caerPieza(frameTablero, celdas, labelPuntuacion, nombre_jugador))
+    else:
+        insertarPieza()
         
-    insertarPiezaEnMatriz()
-    mostrarTablero(matriz,frameTablero,piezas)
+        filas_eliminadas = verificarFilasCompletas()
+        
+        labelPuntuacion.config(text=f"Puntaje: {puntuacion}")
+        actualizar_tablero(celdas)
+        
+        nuevaPieza()
+        
+        if not puedeMover(posicionX, posicionY):
+            juego_terminado = True
+            movimiento_activo = False
+            messagebox.showinfo("Fin del juego", 
+                               f"¡Juego terminado, {nombre_jugador}!\n\nPuntaje final: {puntuacion}\n\n¡Gracias por jugar!")
+            return
+        
+        insertarPieza()
+        actualizar_tablero(celdas)
+        
+        frameTablero.after(velocidad, lambda: caerPieza(frameTablero, celdas, labelPuntuacion, nombre_jugador))
 
-#==========================
-#Ejecucion del Juego (Fin)
-#===========================
+def togglePausa():
+    global pausado
+    pausado = not pausado
+    return pausado
 
-#===================================
-#Ventana del Menu Principal (Inicio)
-#===================================
+def solicitar_nombre():
+    ventana_nombre = tk.Toplevel(ventana)
+    ventana_nombre.title("Ingresa tu nombre")
+    ventana_nombre.geometry("400x300")
+    ventana_nombre.configure(bg="darkblue")
+    ventana_nombre.resizable(False, False)
+    
+    tk.Label(ventana_nombre, text="🎮 TETRIS EXTENDIDO 🎮", 
+             font=("Arial", 16, "bold"), bg="darkblue", fg="yellow").pack(pady=20)
+    
+    tk.Label(ventana_nombre, text="Ingresa tu nombre:", 
+             font=("Arial", 12), bg="darkblue", fg="white").pack(pady=10)
+    
+    nombre_jugador = tk.StringVar()
+    entrada_nombre = tk.Entry(ventana_nombre, textvariable=nombre_jugador,
+                             font=("Arial", 12), width=20, justify="center")
+    entrada_nombre.pack(pady=10)
+    entrada_nombre.focus()
+    
+    def iniciar_con_nombre():
+        nombre = nombre_jugador.get().strip()
+        if nombre:
+            ventana_nombre.destroy()
+            iniciarJuego(nombre)
+        else:
+            tk.Label(ventana_nombre, text="⚠️ Por favor ingresa tu nombre", 
+                    font=("Arial", 10), bg="darkblue", fg="red").pack()
+    
+    tk.Button(ventana_nombre, text="🎮 ¡COMENZAR!", 
+             font=("Arial", 12, "bold"), bg="green", fg="white",
+             width=15, command=iniciar_con_nombre).pack(pady=20)
+    
+    def al_presionar_enter(event):
+        iniciar_con_nombre()
+    
+    entrada_nombre.bind("<Return>", al_presionar_enter)
 
-#Funcion provisional mientras se termina de crear el resto de funciones
-def coomingSoon(opcion):
-     messagebox.showinfo("⚠️Aviso⚠️","Funcion en construccion: Coming soon 👷")
+def iniciarJuego(nombre_jugador="Jugador"):
+    global matriz, puntuacion, nivel, velocidad, pausado, juego_terminado, movimiento_activo
+    
+    matriz = crear_tablero()
+    puntuacion = 0
+    nivel = 1
+    velocidad = 500
+    pausado = False
+    juego_terminado = False
+    movimiento_activo = True
+    
+    ventanaJuego = tk.Toplevel(ventana)
+    ventanaJuego.title(f"Tetris Extendido - {nombre_jugador}")
+    ventanaJuego.configure(bg="black")
+    ventanaJuego.resizable(False, False)
+    
+    panelInfo = tk.Frame(ventanaJuego, bg="black")
+    panelInfo.pack(pady=10)
+    
+    tk.Label(panelInfo, text=f"🎮 Jugador: {nombre_jugador}", 
+             font=("Arial", 12, "bold"), fg="cyan", bg="black").pack()
+    
+    labelPuntuacion = tk.Label(panelInfo, text=f"Puntaje: {puntuacion}", 
+                              font=("Arial", 14, "bold"), fg="white", bg="black")
+    labelPuntuacion.pack()
+    
+    panelPrincipal = tk.Frame(ventanaJuego, bg="black")
+    panelPrincipal.pack(pady=10)
+    
+    frameTablero = tk.Frame(panelPrincipal, bg="black")
+    frameTablero.pack(side="left", padx=20)
+    
+    panelControles = tk.Frame(panelPrincipal, bg="black")
+    panelControles.pack(side="left", padx=20, fill="y")
+    
+    labelEstado = tk.Label(panelControles, text="", 
+                          font=("Arial", 12, "bold"), fg="red", bg="black")
+    labelEstado.pack(pady=5)
+    
+    tk.Label(panelControles, text="CONTROLES:", font=("Arial", 10, "bold"), 
+             fg="yellow", bg="black").pack(pady=(10,5))
+    
+    instrucciones = [
+        "← → : Mover lateralmente",
+        "↓ : Caída rápida", 
+        "Espacio: Rotar pieza",
+        "P: Pausar/Reanudar"
+    ]
+    
+    for inst in instrucciones:
+        tk.Label(panelControles, text=inst, font=("Arial", 8), 
+                fg="white", bg="black").pack(anchor="w")
+    
+    tk.Label(panelControles, text="", bg="black").pack(pady=10)  
+    
+    # Información de piezas
+    tk.Label(panelControles, text="PIEZAS:", font=("Arial", 10, "bold"), 
+             fg="cyan", bg="black").pack()
+    
+    piezas_info = [
+        "O: Cuadrado", "I: Línea", "L: Ele", "J: Jota", 
+        "T: Te", "Z: Zeta", "S: Ese", "+: Cruz", "U: U"
+    ]
+    for info in piezas_info:
+        tk.Label(panelControles, text=info, font=("Arial", 7), 
+                fg="lightgray", bg="black").pack(anchor="w")
+    
+    tk.Label(panelControles, text="", bg="black").pack(pady=5)
+    
+    # Información de obstáculos
+    tk.Label(panelControles, text="OBSTÁCULOS:", font=("Arial", 9, "bold"), 
+             fg="red", bg="black").pack()
+    tk.Label(panelControles, text="Bloques rojos indestructibles", font=("Arial", 7), 
+             fg="lightcoral", bg="black").pack()
+    tk.Label(panelControles, text="Editables en el código", font=("Arial", 7), 
+             fg="lightcoral", bg="black").pack()
+    
+    tk.Label(panelControles, text="", bg="black").pack(pady=10)  
+    
+    # Función mejorada para manejar pausa
+    def manejarPausa():
+        pausado_actual = togglePausa()
+        if pausado_actual:
+            botonPausa.config(text="▶ Reanudar", bg="green")
+            labelEstado.config(text="⏸ PAUSADO", fg="yellow")
+        else:
+            botonPausa.config(text="⏸ Pausa", bg="orange")
+            labelEstado.config(text="▶ JUGANDO", fg="green")
+    
+    # Botones
+    botonPausa = tk.Button(panelControles, text="⏸ Pausa", 
+                          font=("Arial", 10, "bold"), bg="orange", fg="black",
+                          width=12, command=manejarPausa)
+    botonPausa.pack(pady=5)
+    
+    tk.Button(panelControles, text="🔄 Nuevo Juego", 
+             font=("Arial", 10, "bold"), bg="green", fg="white",
+             width=12, command=lambda: [ventanaJuego.destroy(), solicitar_nombre()]).pack(pady=5)
+    
+    tk.Button(panelControles, text="❌ Salir", 
+             font=("Arial", 10, "bold"), bg="red", fg="white",
+             width=12, command=ventanaJuego.destroy).pack(pady=5)
+    
+    # Inicializar estado
+    labelEstado.config(text="▶ JUGANDO", fg="green")
+    
+    # Inicializar juego
+    nuevaPieza()
+    insertarPieza()
+    celdas = mostrarTablero(matriz, frameTablero)
+    
+    # Configurar controles mejorados
+    def manejar_tecla(event):
+        # Permitir pausar incluso durante el juego pausado
+        if event.keysym.lower() == "p":
+            manejarPausa()
+            return
+        
+        # Solo permitir otros controles si no está pausado
+        if not pausado and not juego_terminado:
+            if event.keysym == "Left":
+                moverPieza("izquierda", celdas)
+            elif event.keysym == "Right":
+                moverPieza("derecha", celdas)
+            elif event.keysym == "Down":
+                moverPieza("abajo", celdas)
+            elif event.keysym == "space":
+                moverPieza("rotar", celdas)
+    
+    ventanaJuego.bind("<Key>", manejar_tecla)
+    ventanaJuego.focus_set()
+    
+    # Cerrar juego al cerrar ventana
+    def al_cerrar():
+        global movimiento_activo
+        movimiento_activo = False
+        ventanaJuego.destroy()
+    
+    ventanaJuego.protocol("WM_DELETE_WINDOW", al_cerrar)
+    
+    # Función modificada para game over con nombre
+    def caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion):
+        global posicionY, juego_terminado, movimiento_activo
+        
+        # Si el juego está terminado o el movimiento no está activo, salir
+        if juego_terminado or not movimiento_activo:
+            return
+        
+        # Si está pausado, programar nueva verificación sin hacer nada más
+        if pausado:
+            frameTablero.after(100, lambda: caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion))
+            return
+        
+        borrarPieza()
+        
+        if puedeMover(posicionX, posicionY + 1):
+            posicionY = posicionY + 1
+            insertarPieza()
+            actualizar_tablero(celdas)
+            # Programar siguiente caída
+            frameTablero.after(velocidad, lambda: caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion))
+        else:
+            # La pieza no puede caer más
+            insertarPieza()
+            
+            # Verificar filas completas
+            filas_eliminadas = verificarFilasCompletas()
+            
+            # Actualizar interfaz
+            labelPuntuacion.config(text=f"Puntaje: {puntuacion}")
+            actualizar_tablero(celdas)
+            
+            # Crear nueva pieza
+            nuevaPieza()
+            
+            # Verificar game over
+            if not puedeMover(posicionX, posicionY):
+                juego_terminado = True
+                movimiento_activo = False
+                messagebox.showinfo("Fin del juego", 
+                                   f"¡Juego terminado, {nombre_jugador}!\n\nPuntaje final: {puntuacion}\n\n¡Gracias por jugar!")
+                return
+            
+            insertarPieza()
+            actualizar_tablero(celdas)
+            
+            # Continuar con la nueva pieza
+            frameTablero.after(velocidad, lambda: caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion))
+    
+    # Iniciar caída automática con nombre
+    caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion)
 
-#======================================
+def coomingSoon():
+    messagebox.showinfo("Próximamente", "Esta función estará disponible pronto")
 
-#Funcion para poder cerrar ventana principal
 def salir():
-     ventana.destroy()
+    ventana.quit()
 
-#======================================
+#=====================================
+# Ventana Principal
+#=====================================
 
-#Creacion de la ventana principal
 ventana = tk.Tk()
-ventana.title("Tetris")
-ventana.geometry("650x575")
-
-#=======================================
-
-#Personalizacion de la ventana
+ventana.title("🎮 TETRIS EXTENDIDO 🎮")
+ventana.geometry("600x500")
 ventana.configure(bg="darkblue")
+ventana.resizable(False, False)
 
-tk.Label(ventana, text="Menu Principal", font=("Arial", 16 , "bold"),bg="darkblue",fg="orange").pack(pady=10)
+# Título principal
+tk.Label(ventana, text="🎮 TETRIS EXTENDIDO 🎮", 
+         font=("Arial", 24, "bold"), bg="darkblue", fg="yellow").pack(pady=30)
 
-opciones = ["1.Continuar juego","2.Nuevo juego","3.Estadisticas de juegos","4.Salir"]
+tk.Label(ventana, text="¡Con obstáculos personalizables y piezas + y U!", 
+         font=("Arial", 12, "bold"), bg="darkblue", fg="orange").pack(pady=5)
 
-#======================================
+tk.Label(ventana, text="Menú Principal", 
+         font=("Arial", 16, "bold"), bg="darkblue", fg="orange").pack(pady=10)
 
-#Asignacion de funciones a cada boton
+# Botones del menú
+opciones = [
+    ("🎯 Nuevo Juego", "red", solicitar_nombre),
+    ("📊 Estadísticas", "gold", coomingSoon),
+    ("💾 Cargar Partida", "green", coomingSoon),
+    ("❌ Salir", "violet", salir)
+]
 
-i = 1 
+for texto, color, comando in opciones:
+    boton = tk.Button(ventana, text=texto, 
+                     font=("Arial", 14, "bold"), bg=color, fg="white",
+                     width=25, height=2, command=comando,
+                     relief="raised", bd=3)
+    boton.pack(pady=10)
 
-for texto in opciones:
-     if  i == 1:
-          boton = tk.Button(ventana, text=texto, font=("Arial", 12 , "bold"),bg="green",fg="white", width=40, height=2, command=lambda i=i: coomingSoon(i))
-     elif  i == 2:
-          boton = tk.Button(ventana, text=texto, font=("Arial", 12 , "bold" ),bg="red",fg="white", width=40, height=2, command=nuevoJuego)
-     elif  i == 3:
-          boton = tk.Button(ventana, text=texto, font=("Arial", 12 ,"bold" ),bg="gold",fg="white",  width=40, height=2, command=lambda i=i: coomingSoon(i))
-     elif  i == 4:
-          boton = tk.Button(ventana, text=texto, font=("Arial", 12 ,"bold" ),bg="violet",fg="white", width=40, height=2, command=salir)
+# Información de controles y edición
+tk.Label(ventana, text="Controles: ← → (mover) | ↓ (bajar) | ESPACIO (rotar) | P (pausa)", 
+         font=("Arial", 10), bg="darkblue", fg="lightblue").pack(side="bottom", pady=10)
 
-     boton.pack(pady=3)
-     i += 1
+tk.Label(ventana, text="Para agregar obstáculos: Edita MATRIZ_PERSONALIZABLE en el código (cambia 0 por 'X')", 
+         font=("Arial", 9), bg="darkblue", fg="lightcyan").pack(side="bottom", pady=5)
 
-#========================================
-
-#Para poder ejecutar el programa
-ventana.mainloop()
-
-#=====================================
-#Ventana del Menu Principal (Fin)
-#=====================================
+if __name__ == "__main__":
+    ventana.mainloop()
