@@ -46,17 +46,20 @@ MATRIZ_PERSONALIZABLE = [
     ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
     ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
     ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
+    ['+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '+'],  
     ['+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+', '+']
 ]
 
 def crear_tablero():
     matriz = []
     for fila in MATRIZ_PERSONALIZABLE:
-        nueva_fila = fila.copy()  
-        matriz + [nueva_fila]
+        nueva_fila = []
+        for valor in fila:
+            nueva_fila = nueva_fila + [valor]
+        matriz = matriz + [nueva_fila]
     return matriz
 
-# Piezas de Tetris 
 piezas = {
     # Pieza O (Cuadrado) - No rota
     "O": [[
@@ -194,6 +197,7 @@ def mostrarTablero(matriz, frameTablero):
         widget.destroy()
     
     celdas = []
+    
     for fila in range(largolista(matriz)):
         fila_celdas = []
         for col in range(largolista(matriz[0])):
@@ -209,8 +213,8 @@ def mostrarTablero(matriz, frameTablero):
                 bg=color
             )
             celda.grid(row=fila, column=col, padx=0, pady=0)
-            fila_celdas = fila_celdas + [celda]
-        celdas = celdas + [fila_celdas]
+            fila_celdas = fila_celdas + [celda]  
+        celdas = celdas + [fila_celdas]  
     
     return celdas
 
@@ -232,7 +236,7 @@ def nuevaPieza():
     posicionY = 1
 
 def puedeMover(nuevaX, nuevaY, pieza=None):
-    if pieza == None:
+    if pieza is None:
         pieza = piezaActiva
     
     for fila in range(5):
@@ -241,12 +245,12 @@ def puedeMover(nuevaX, nuevaY, pieza=None):
                 y = nuevaY + fila
                 x = nuevaX + col
                 
-                # Verificar límites
+                # Se verfican los limites
                 if (y < 0 or y >= largolista(matriz) or 
                     x < 0 or x >= largolista(matriz[0])):
                     return False
                 
-                # Verificar colisiones (incluye obstáculos 'X')
+                # Se verfican las colisiones incluido el obstaculo
                 if matriz[y][x] != 0:
                     return False
     return True
@@ -281,11 +285,11 @@ def rotarPieza():
     if tipoPieza == "O":  # El cuadrado no posee rotacion
         return False
     
-    # Guardar estado actual
+    # Guardar el estado actual
     pieza_anterior = piezaActiva
     rotacion_anterior = rotacion
     
-    # Calcular nueva rotación
+    # Calcular la nueva rotación
     num_rotaciones = largolista(piezas[tipoPieza])
     nueva_rotacion = (rotacion + 1) % num_rotaciones
     nueva_pieza = piezas[tipoPieza][nueva_rotacion]
@@ -302,7 +306,7 @@ def verificarFilasCompletas():
     global puntuacion, nivel, velocidad
     
     filas_eliminadas = 0
-    fila = largolista(matriz) - 2  # Empezar desde abajo, evitar bordes
+    fila = largolista(matriz) - 2  
     
     while fila > 0:
         completa = True
@@ -313,7 +317,7 @@ def verificarFilasCompletas():
                 break
         
         if completa:
-            filas_eliminadas = filas_eliminadas + 1
+            filas_eliminadas = filas_eliminadas + 1  
             
             for y in range(fila, 1, -1):
                 for x in range(1, largolista(matriz[0]) - 1):
@@ -331,11 +335,11 @@ def verificarFilasCompletas():
                     matriz[1][x] = 0
                 
         else:
-            fila = fila - 1
+            fila = fila - 1  
     
     if filas_eliminadas > 0:
         puntos = filas_eliminadas * 100 * nivel
-        puntuacion = puntuacion + puntos
+        puntuacion = puntuacion + puntos  
         
         nuevo_nivel = (puntuacion // 1000) + 1
         if nuevo_nivel > nivel:
@@ -353,11 +357,11 @@ def moverPieza(direccion, celdas):
     borrarPieza()
     
     if direccion == "izquierda" and puedeMover(posicionX - 1, posicionY):
-        posicionX = posicionX - 1
+        posicionX = posicionX - 1  
     elif direccion == "derecha" and puedeMover(posicionX + 1, posicionY):
-        posicionX = posicionX + 1
+        posicionX = posicionX + 1  
     elif direccion == "abajo" and puedeMover(posicionX, posicionY + 1):
-        posicionY = posicionY + 1
+        posicionY = posicionY + 1  
     elif direccion == "rotar":
         rotarPieza()
     
@@ -377,7 +381,7 @@ def caerPieza(frameTablero, celdas, labelPuntuacion, nombre_jugador="Jugador"):
     borrarPieza()
     
     if puedeMover(posicionX, posicionY + 1):
-        posicionY = posicionY + 1
+        posicionY = posicionY + 1  
         insertarPieza()
         actualizar_tablero(celdas)
         frameTablero.after(velocidad, lambda: caerPieza(frameTablero, celdas, labelPuntuacion, nombre_jugador))
@@ -500,7 +504,7 @@ def iniciarJuego(nombre_jugador="Jugador"):
     
     tk.Label(panelControles, text="", bg="black").pack(pady=10)  
     
-    # Información de piezas
+    # Información de las piezas
     tk.Label(panelControles, text="PIEZAS:", font=("Arial", 10, "bold"), 
              fg="cyan", bg="black").pack()
     
@@ -514,7 +518,7 @@ def iniciarJuego(nombre_jugador="Jugador"):
     
     tk.Label(panelControles, text="", bg="black").pack(pady=5)
     
-    # Información de obstáculos
+    # Información de los obstáculos
     tk.Label(panelControles, text="OBSTÁCULOS:", font=("Arial", 9, "bold"), 
              fg="red", bg="black").pack()
     tk.Label(panelControles, text="Bloques rojos indestructibles", font=("Arial", 7), 
@@ -524,7 +528,7 @@ def iniciarJuego(nombre_jugador="Jugador"):
     
     tk.Label(panelControles, text="", bg="black").pack(pady=10)  
     
-    # Función mejorada para manejar pausa
+    # Función para manejar la pausa
     def manejarPausa():
         pausado_actual = togglePausa()
         if pausado_actual:
@@ -558,7 +562,7 @@ def iniciarJuego(nombre_jugador="Jugador"):
     
     # Configurar controles mejorados
     def manejar_tecla(event):
-        # Permitir pausar incluso durante el juego pausado
+        # Se pausar incluso durante el juego 
         if event.keysym.lower() == "p":
             manejarPausa()
             return
@@ -585,59 +589,10 @@ def iniciarJuego(nombre_jugador="Jugador"):
     
     ventanaJuego.protocol("WM_DELETE_WINDOW", al_cerrar)
     
-    # Función modificada para game over con nombre
-    def caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion):
-        global posicionY, juego_terminado, movimiento_activo
-        
-        # Si el juego está terminado o el movimiento no está activo, salir
-        if juego_terminado or not movimiento_activo:
-            return
-        
-        # Si está pausado, programar nueva verificación sin hacer nada más
-        if pausado:
-            frameTablero.after(100, lambda: caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion))
-            return
-        
-        borrarPieza()
-        
-        if puedeMover(posicionX, posicionY + 1):
-            posicionY = posicionY + 1
-            insertarPieza()
-            actualizar_tablero(celdas)
-            # Programar siguiente caída
-            frameTablero.after(velocidad, lambda: caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion))
-        else:
-            # La pieza no puede caer más
-            insertarPieza()
-            
-            # Verificar filas completas
-            filas_eliminadas = verificarFilasCompletas()
-            
-            # Actualizar interfaz
-            labelPuntuacion.config(text=f"Puntaje: {puntuacion}")
-            actualizar_tablero(celdas)
-            
-            # Crear nueva pieza
-            nuevaPieza()
-            
-            # Verificar game over
-            if not puedeMover(posicionX, posicionY):
-                juego_terminado = True
-                movimiento_activo = False
-                messagebox.showinfo("Fin del juego", 
-                                   f"¡Juego terminado, {nombre_jugador}!\n\nPuntaje final: {puntuacion}\n\n¡Gracias por jugar!")
-                return
-            
-            insertarPieza()
-            actualizar_tablero(celdas)
-            
-            # Continuar con la nueva pieza
-            frameTablero.after(velocidad, lambda: caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion))
-    
-    # Iniciar caída automática con nombre
-    caerPieza_con_nombre(frameTablero, celdas, labelPuntuacion)
+    # Iniciar caída automática
+    caerPieza(frameTablero, celdas, labelPuntuacion, nombre_jugador)
 
-def coomingSoon():
+def comingSoon():
     messagebox.showinfo("Próximamente", "Esta función estará disponible pronto")
 
 def salir():
@@ -666,8 +621,8 @@ tk.Label(ventana, text="Menú Principal",
 # Botones del menú
 opciones = [
     ("🎯 Nuevo Juego", "red", solicitar_nombre),
-    ("📊 Estadísticas", "gold", coomingSoon),
-    ("💾 Cargar Partida", "green", coomingSoon),
+    ("📊 Estadísticas", "gold", comingSoon),
+    ("💾 Cargar Partida", "green", comingSoon),
     ("❌ Salir", "violet", salir)
 ]
 
@@ -685,5 +640,4 @@ tk.Label(ventana, text="Controles: ← → (mover) | ↓ (bajar) | ESPACIO (rota
 tk.Label(ventana, text="Para agregar obstáculos: Edita MATRIZ_PERSONALIZABLE en el código (cambia 0 por 'X')", 
          font=("Arial", 9), bg="darkblue", fg="lightcyan").pack(side="bottom", pady=5)
 
-if __name__ == "__main__":
-    ventana.mainloop()
+ventana.mainloop()
